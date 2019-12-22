@@ -27,8 +27,7 @@ func GET(url string) (io.ReadCloser, error) {
 	}
 
 	if resp.StatusCode != 200 {
-		resp.Body.Close()
-		return nil, fmt.Errorf("Request unsuccessful: %v (%v) - %v", resp.Status, resp.StatusCode, url)
+		return resp.Body, fmt.Errorf("Request unsuccessful: %v (%v) - %v", resp.Status, resp.StatusCode, url)
 	}
 
 	return resp.Body, nil
