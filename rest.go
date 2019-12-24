@@ -12,11 +12,8 @@ func JSONDecoder(data io.ReadCloser, target interface{}) error {
 	decoder := json.NewDecoder(data)
 
 	err := decoder.Decode(target)
-	if err != nil {
-		return err
-	}
 
-	return nil
+	return err
 }
 
 // GET returns io.ReadCloser of response body. Don't forget to close it.
