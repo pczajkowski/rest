@@ -107,3 +107,14 @@ func TestGET404(t *testing.T) {
 		t.Errorf("Wrong result, %v", resultString)
 	}
 }
+
+func TestGETNoServer(t *testing.T) {
+	data, err := GET("/")
+	if data != nil {
+		t.Error("Data should be nil!")
+	}
+
+	if err == nil {
+		t.Error("There should be an error!")
+	}
+}
