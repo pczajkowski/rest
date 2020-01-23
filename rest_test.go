@@ -84,3 +84,26 @@ func TestGET(t *testing.T) {
 		t.Errorf("Wrong result, %v", resultString)
 	}
 }
+
+func TestGET404(t *testing.T) {
+	expected := "Some text"
+	server := fakeServer(http.StatusNotFound, expected)
+	defer server.Close()
+
+	data, err := GET(server.URL)
+	defer data.Close()
+	if err == nil {
+		t.Error("There should be an error!")
+	}
+
+	result, errReading := ioutil.ReadAll(data)
+	if errReading != nil {
+		t.Error(err)
+	}
+
+	resultString := string(result)
+
+	if expected != resultString {
+		t.Errorf("Wrong result, %v", resultString)
+	}
+}
