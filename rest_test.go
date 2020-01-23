@@ -68,7 +68,11 @@ func TestGET(t *testing.T) {
 	defer server.Close()
 
 	data, err := GET(server.URL)
+	if data == nil {
+		t.Error("Data shouldn't be nil")
+	}
 	defer data.Close()
+
 	if err != nil {
 		t.Error(err)
 	}
@@ -91,7 +95,11 @@ func TestGET404(t *testing.T) {
 	defer server.Close()
 
 	data, err := GET(server.URL)
+	if data == nil {
+		t.Error("Data shouldn't be nil")
+	}
 	defer data.Close()
+
 	if err == nil {
 		t.Error("There should be an error!")
 	}
