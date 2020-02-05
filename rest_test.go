@@ -62,7 +62,7 @@ func fakeServer(statusCode int, data string) *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(function))
 }
 
-func TestGET(t *testing.T) {
+func TestGETBodyToString(t *testing.T) {
 	expected := "Some text"
 	server := fakeServer(http.StatusOK, expected)
 	defer server.Close()
@@ -77,19 +77,17 @@ func TestGET(t *testing.T) {
 		t.Error(err)
 	}
 
-	result, errReading := ioutil.ReadAll(data)
+	result, errReading := BodyToString(data)
 	if errReading != nil {
-		t.Error(err)
+		t.Error(errReading)
 	}
 
-	resultString := string(result)
-
-	if expected != resultString {
-		t.Errorf("Wrong result, %v", resultString)
+	if expected != result {
+		t.Errorf("Wrong result, %v", result)
 	}
 }
 
-func TestGET404(t *testing.T) {
+func TestGETBodyToString404(t *testing.T) {
 	expected := "Some text"
 	server := fakeServer(http.StatusNotFound, expected)
 	defer server.Close()
@@ -104,15 +102,13 @@ func TestGET404(t *testing.T) {
 		t.Error("There should be an error!")
 	}
 
-	result, errReading := ioutil.ReadAll(data)
+	result, errReading := BodyToString(data)
 	if errReading != nil {
-		t.Error(err)
+		t.Error(errReading)
 	}
 
-	resultString := string(result)
-
-	if expected != resultString {
-		t.Errorf("Wrong result, %v", resultString)
+	if expected != result {
+		t.Errorf("Wrong result, %v", result)
 	}
 }
 

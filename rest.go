@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -28,4 +29,16 @@ func GET(url string) (io.ReadCloser, error) {
 	}
 
 	return resp.Body, nil
+}
+
+// BodyToString returns string read from given Body.
+func BodyToString(data io.ReadCloser) (string, error) {
+	var buffer bytes.Buffer
+
+	_, err := buffer.ReadFrom(data)
+	if err != nil {
+		return "", err
+	}
+
+	return buffer.String(), nil
 }
