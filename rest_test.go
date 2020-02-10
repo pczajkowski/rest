@@ -57,7 +57,7 @@ func fakeServer(statusCode int, data string) *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(function))
 }
 
-func TestGETBodyToString(t *testing.T) {
+func TestGET(t *testing.T) {
 	expected := "Some text"
 	server := fakeServer(http.StatusOK, expected)
 	defer server.Close()
@@ -78,7 +78,7 @@ func TestGETBodyToString(t *testing.T) {
 	}
 }
 
-func TestGETBodyToString404(t *testing.T) {
+func TestGET404(t *testing.T) {
 	expected := "Some text"
 	server := fakeServer(http.StatusNotFound, expected)
 	defer server.Close()
