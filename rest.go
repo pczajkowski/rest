@@ -9,7 +9,7 @@ import (
 )
 
 // JSONDecoder decodes json from given bytes buffer to target object.
-func JSONDecoder(data bytes.Buffer, target interface{}) error {
+func JSONDecoder(data *bytes.Buffer, target interface{}) error {
 	err := json.Unmarshal(data.Bytes(), target)
 
 	return err
@@ -18,7 +18,10 @@ func JSONDecoder(data bytes.Buffer, target interface{}) error {
 // GET returns bytes buffer of response body.
 func GET(url string) (*bytes.Buffer, error) {
 	resp, err := http.Get(url)
-	defer resp.Body.Close()
+	if resp != nil {
+		defer resp.Body.Close()
+	}
+
 	if err != nil {
 		return nil, fmt.Errorf("Response error: %v", err)
 	}
