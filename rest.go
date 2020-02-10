@@ -8,37 +8,40 @@ import (
 	"net/http"
 )
 
-// JSONDecoder decodes json from given io.ReadCloser to target object.
-func JSONDecoder(data io.ReadCloser, target interface{}) error {
-	decoder := json.NewDecoder(data)
-
-	err := decoder.Decode(target)
+// JSONDecoder decodes json from given bytes buffer to target object.
+func JSONDecoder(data bytes.Buffer, target interface{}) error {
+	err := json.Unmarshal(data.Bytes(), target)
 
 	return err
 }
 
-// GET returns io.ReadCloser of response body. Don't forget to close it.
-func GET(url string) (io.ReadCloser, error) {
+// GET returns bytes buffer of response body.
+func GET(url string) (*bytes.Buffer, error) {
 	resp, err := http.Get(url)
+	defer resp.Body.Close()
 	if err != nil {
 		return nil, fmt.Errorf("Response error: %v", err)
 	}
 
-	if resp.StatusCode != http.StatusOK {
-		return resp.Body, fmt.Errorf("Request unsuccessful: %v - %v", resp.Status, url)
+	body, err := bodyToBuffer(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("Error reading body: %v", err)
 	}
 
-	return resp.Body, nil
+	if resp.StatusCode != http.StatusOK {
+		return body, fmt.Errorf("Request unsuccessful: %v - %v", resp.Status, url)
+	}
+
+	return body, nil
 }
 
-// BodyToString returns string read from given Body.
-func BodyToString(data io.ReadCloser) (string, error) {
+func bodyToBuffer(data io.ReadCloser) (*bytes.Buffer, error) {
 	var buffer bytes.Buffer
 
 	_, err := buffer.ReadFrom(data)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return buffer.String(), nil
+	return &buffer, nil
 }
