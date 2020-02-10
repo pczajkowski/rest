@@ -1,11 +1,10 @@
 package rest
 
 import (
+	"bytes"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
 )
 
@@ -16,14 +15,12 @@ type Something struct {
 
 func TestJSONDecoder(t *testing.T) {
 	const json = `{ "First": 15, "Second": "Some string" }`
-	reader := strings.NewReader(json)
-	readcloser := ioutil.NopCloser(reader)
-	defer readcloser.Close()
+	buffer := bytes.NewBuffer([]byte(json))
 
 	expected := Something{First: 15, Second: "Some string"}
 
 	var result Something
-	err := JSONDecoder(readcloser, &result)
+	err := JSONDecoder(buffer, &result)
 	if err != nil {
 		t.Error(err)
 	}
@@ -35,14 +32,12 @@ func TestJSONDecoder(t *testing.T) {
 
 func TestJSONDecoderBadJSON(t *testing.T) {
 	const badJSON = `{ First: 15, "Second": "Some string" }`
-	reader := strings.NewReader(badJSON)
-	readcloser := ioutil.NopCloser(reader)
-	defer readcloser.Close()
+	buffer := bytes.NewBuffer([]byte(badJSON))
 
 	expected := Something{First: 15, Second: "Some string"}
 
 	var result Something
-	err := JSONDecoder(readcloser, &result)
+	err := JSONDecoder(buffer, &result)
 	if err == nil {
 		t.Error("There should be an error")
 	}
@@ -71,16 +66,12 @@ func TestGETBodyToString(t *testing.T) {
 	if data == nil {
 		t.Error("Data shouldn't be nil")
 	}
-	defer data.Close()
 
 	if err != nil {
 		t.Error(err)
 	}
 
-	result, errReading := BodyToString(data)
-	if errReading != nil {
-		t.Error(errReading)
-	}
+	result := data.String()
 
 	if expected != result {
 		t.Errorf("Wrong result, %v", result)
@@ -96,16 +87,12 @@ func TestGETBodyToString404(t *testing.T) {
 	if data == nil {
 		t.Error("Data shouldn't be nil")
 	}
-	defer data.Close()
 
 	if err == nil {
 		t.Error("There should be an error!")
 	}
 
-	result, errReading := BodyToString(data)
-	if errReading != nil {
-		t.Error(errReading)
-	}
+	result := data.String()
 
 	if expected != result {
 		t.Errorf("Wrong result, %v", result)
