@@ -26,7 +26,7 @@ func GET(url string) (*bytes.Buffer, error) {
 		return nil, fmt.Errorf("Response error: %v", err)
 	}
 
-	body, err := bodyToBuffer(resp.Body)
+	body, err := BodyToBuffer(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("Error reading body: %v", err)
 	}
@@ -38,7 +38,8 @@ func GET(url string) (*bytes.Buffer, error) {
 	return body, nil
 }
 
-func bodyToBuffer(data io.ReadCloser) (*bytes.Buffer, error) {
+// BodyToBuffer reads data from ReadCloser and returns bytes buffer.
+func BodyToBuffer(data io.ReadCloser) (*bytes.Buffer, error) {
 	var buffer bytes.Buffer
 
 	_, err := buffer.ReadFrom(data)
