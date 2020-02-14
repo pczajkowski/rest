@@ -78,6 +78,27 @@ func TestGET(t *testing.T) {
 	}
 }
 
+func TestGET206(t *testing.T) {
+	expected := "Some text"
+	server := fakeServer(http.StatusPartialContent, expected)
+	defer server.Close()
+
+	data, err := GET(server.URL)
+	if data == nil {
+		t.Error("Data shouldn't be nil")
+	}
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	result := data.String()
+
+	if expected != result {
+		t.Errorf("Wrong result, %v", result)
+	}
+}
+
 func TestGET404(t *testing.T) {
 	expected := "Some text"
 	server := fakeServer(http.StatusNotFound, expected)

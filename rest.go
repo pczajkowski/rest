@@ -31,7 +31,7 @@ func GET(url string) (*bytes.Buffer, error) {
 		return nil, fmt.Errorf("Error reading body: %v", err)
 	}
 
-	if resp.StatusCode != http.StatusOK {
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusPartialContent {
 		return body, fmt.Errorf("Request unsuccessful: %v - %v", resp.Status, url)
 	}
 
