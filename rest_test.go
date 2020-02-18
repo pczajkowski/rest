@@ -20,7 +20,7 @@ func TestJSONDecoder(t *testing.T) {
 	expected := Something{First: 15, Second: "Some string"}
 
 	var result Something
-	err := JSONDecoder(buffer, &result)
+	err := JSONDecoder(buffer.Bytes(), &result)
 	if err != nil {
 		t.Error(err)
 	}
@@ -37,7 +37,7 @@ func TestJSONDecoderBadJSON(t *testing.T) {
 	expected := Something{First: 15, Second: "Some string"}
 
 	var result Something
-	err := JSONDecoder(buffer, &result)
+	err := JSONDecoder(buffer.Bytes(), &result)
 	if err == nil {
 		t.Error("There should be an error")
 	}

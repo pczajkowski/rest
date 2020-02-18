@@ -8,9 +8,9 @@ import (
 	"net/http"
 )
 
-// JSONDecoder decodes json from given bytes buffer to target object.
-func JSONDecoder(data *bytes.Buffer, target interface{}) error {
-	err := json.Unmarshal(data.Bytes(), target)
+// JSONDecoder decodes json from given bytes array to target object.
+func JSONDecoder(data []byte, target interface{}) error {
+	err := json.Unmarshal(data, target)
 
 	return err
 }
