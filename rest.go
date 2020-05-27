@@ -8,14 +8,14 @@ import (
 	"net/http"
 )
 
-// JSONDecoder decodes json from given bytes array to target object.
+//JSONDecoder decodes json from given bytes array to target object.
 func JSONDecoder(data []byte, target interface{}) error {
 	err := json.Unmarshal(data, target)
 
 	return err
 }
 
-// GET returns bytes buffer of response body.
+//GET returns bytes buffer of response body.
 func GET(url string) (*bytes.Buffer, error) {
 	resp, err := http.Get(url)
 	if resp != nil {
@@ -38,7 +38,7 @@ func GET(url string) (*bytes.Buffer, error) {
 	return body, nil
 }
 
-// BodyToBuffer reads data from ReadCloser and returns bytes buffer.
+//BodyToBuffer reads data from ReadCloser and returns bytes buffer.
 func BodyToBuffer(data io.ReadCloser) (*bytes.Buffer, error) {
 	var buffer bytes.Buffer
 
