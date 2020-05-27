@@ -45,7 +45,7 @@ func TestJSONDecoderBadJSON(t *testing.T) {
 	}
 
 	if diff := deep.Equal(expected, result); diff == nil {
-		t.Errorf("Structures shouldn't match, %v", diff)
+		t.Error("Structures shouldn't match")
 	}
 }
 
