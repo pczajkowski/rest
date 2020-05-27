@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/go-test/deep"
 )
 
 type Something struct {
@@ -25,8 +27,8 @@ func TestJSONDecoder(t *testing.T) {
 		t.Error(err)
 	}
 
-	if expected.First != result.First || expected.Second != result.Second {
-		t.Errorf("Wrong result: %v", result)
+	if diff := deep.Equal(expected, result); diff != nil {
+		t.Errorf("Wrong result: %v", diff)
 	}
 }
 
@@ -42,8 +44,8 @@ func TestJSONDecoderBadJSON(t *testing.T) {
 		t.Error("There should be an error")
 	}
 
-	if expected.First == result.First || expected.Second == result.Second {
-		t.Errorf("There should be an error on decoding, %v", result)
+	if diff := deep.Equal(expected, result); diff == nil {
+		t.Errorf("Structures shouldn't match, %v", diff)
 	}
 }
 
