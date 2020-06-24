@@ -8,9 +8,41 @@ import (
 	"net/http"
 )
 
+func getDetailedError(data []byte, err error) error {
+	var limit int64 = 20
+
+	syntaxError, ok := err.(*json.SyntaxError)
+	if ok {
+		end := syntaxError.Offset - 1 + limit
+		dataLength := int64(len(data))
+		if end > dataLength {
+			end = dataLength
+		}
+
+		badPart := string(data[syntaxError.Offset-1 : end])
+		return fmt.Errorf("%s:\n%s", err.Error(), badPart)
+	}
+
+	typeError, ok := err.(*json.UnmarshalTypeError)
+	if ok {
+		start := typeError.Offset - limit
+		if start < 0 {
+			start = 0
+		}
+
+		badPart := string(data[start:typeError.Offset])
+		return fmt.Errorf("%s:\n%s", err.Error(), badPart)
+	}
+
+	return err
+}
+
 //JSONDecoder decodes json from given bytes array to target object.
 func JSONDecoder(data []byte, target interface{}) error {
 	err := json.Unmarshal(data, target)
+	if err != nil {
+		err = getDetailedError(data, err)
+	}
 
 	return err
 }
