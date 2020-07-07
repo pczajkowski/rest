@@ -13,13 +13,18 @@ func getDetailedError(data []byte, err error) error {
 
 	syntaxError, ok := err.(*json.SyntaxError)
 	if ok {
-		end := syntaxError.Offset - 1 + limit
+		start := syntaxError.Offset - 1
+		if start < 0 {
+			start = 0
+		}
+
+		end := start + limit
 		dataLength := int64(len(data))
 		if end > dataLength {
 			end = dataLength
 		}
 
-		badPart := string(data[syntaxError.Offset-1 : end])
+		badPart := string(data[start:end])
 		return fmt.Errorf("%s:\n%s", err.Error(), badPart)
 	}
 
