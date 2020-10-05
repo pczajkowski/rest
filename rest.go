@@ -75,6 +75,20 @@ func GET(url string) (*bytes.Buffer, error) {
 	return body, nil
 }
 
+//HEAD returns map[string][]string of response header.
+func HEAD(url string) (map[string][]string, error) {
+	resp, err := http.Head(url)
+	if err != nil {
+		return nil, fmt.Errorf("Response error: %v", err)
+	}
+
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusPartialContent {
+		return resp.Header, fmt.Errorf("Request unsuccessful: %v - %v", resp.Status, url)
+	}
+
+	return resp.Header, nil
+}
+
 //BodyToBuffer reads data from ReadCloser and returns bytes buffer.
 func BodyToBuffer(data io.ReadCloser) (*bytes.Buffer, error) {
 	var buffer bytes.Buffer

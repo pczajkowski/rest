@@ -72,8 +72,8 @@ func TestJSONDecoderBadJSONType(t *testing.T) {
 
 func fakeServer(statusCode int, data string) *httptest.Server {
 	function := func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(statusCode)
 		w.Header().Set("Content-Type", "text")
+		w.WriteHeader(statusCode)
 		fmt.Fprint(w, data)
 	}
 
@@ -151,5 +151,32 @@ func TestGETNoServer(t *testing.T) {
 
 	if err == nil {
 		t.Error("There should be an error!")
+	}
+}
+
+func TestHEAD(t *testing.T) {
+	server := fakeServer(http.StatusOK, "")
+	defer server.Close()
+
+	data, err := HEAD(server.URL)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if data == nil {
+		t.Error("Data shouldn't be nil")
+	}
+
+	content, ok := data["Content-Type"]
+	if !ok {
+		t.Error("There's no Content-Type in header!")
+	}
+
+	if len(content) == 0 {
+		t.Error("There's no value set for Content-Type!")
+	}
+
+	if content[0] != "text" {
+		t.Errorf("Content-Type should be set to 'text', but is '%s'!", content[0])
 	}
 }
