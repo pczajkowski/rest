@@ -11,9 +11,9 @@ import (
 func getDetailedError(data []byte, err error) error {
 	var limit int64 = 20
 
-	syntaxError, ok := err.(*json.SyntaxError)
-	if ok {
-		start := syntaxError.Offset - 1
+	switch detailed := err.(type) {
+	case *json.SyntaxError:
+		start := detailed.Offset - 1
 		if start < 0 {
 			start = 0
 		}
@@ -26,16 +26,14 @@ func getDetailedError(data []byte, err error) error {
 
 		badPart := string(data[start:end])
 		return fmt.Errorf("%s:\n%s", err.Error(), badPart)
-	}
 
-	typeError, ok := err.(*json.UnmarshalTypeError)
-	if ok {
-		start := typeError.Offset - limit
+	case *json.UnmarshalTypeError:
+		start := detailed.Offset - limit
 		if start < 0 {
 			start = 0
 		}
 
-		badPart := string(data[start:typeError.Offset])
+		badPart := string(data[start:detailed.Offset])
 		return fmt.Errorf("%s:\n%s", err.Error(), badPart)
 	}
 
